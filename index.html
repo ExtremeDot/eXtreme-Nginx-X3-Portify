@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" id="app-html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eXtreme-Nginx-X3-Portify - سازنده هوشمند کانفیگ</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --panel-bg: #161925;
+            --accent-blue: #3b82f6;
+            --accent-teal: #14b8a6;
+            --accent-rose: #f43f5e;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #2e344d;
+            --input-bg: #0b0d14;
+            --separator-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Vazir', Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 1100px;
+            padding: 35px;
+            position: relative;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 6px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .lang-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .section-box {
+            background-color: #1e2235;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--accent-teal);
+            margin-bottom: 20px;
+            border-bottom: 1px dashed rgba(20, 184, 166, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 220px;
+        }
+
+        label { margin-bottom: 8px; font-size: 12.5px; color: var(--text-muted); }
+
+        input, select, textarea {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 11px 15px;
+            border-radius: 8px;
+            font-size: 13.5px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .section-divider {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--separator-color), transparent);
+            margin: 25px 0;
+        }
+
+        .import-container {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+
+        .json-textarea {
+            flex: 2;
+            height: 120px;
+            resize: vertical;
+            direction: ltr;
+            text-align: left;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        .file-upload-box {
+            flex: 1;
+            border: 2px dashed #475569;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--input-bg);
+            cursor: pointer;
+            padding: 20px;
+            min-width: 240px;
+        }
+
+        .file-upload-box:hover { border-color: var(--accent-teal); background-color: rgba(20, 184, 166, 0.02); }
+        .file-upload-box input[type="file"] { display: none; }
+
+        .config-item {
+            background-color: var(--input-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-right: 4px solid var(--accent-blue);
+        }
+        .config-item.no-tls { border-right-color: #e2e8f0; }
+
+        .tick-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 70px;
+        }
+        .tick-label {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .tick-label input { display: none; }
+        .custom-tick {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #475569;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+        .tick-label input:checked + .custom-tick {
+            background: var(--accent-teal);
+            border-color: var(--accent-teal);
+            box-shadow: 0 2px 8px rgba(20, 184, 166, 0.2);
+        }
+        .custom-tick::after {
+            content: "✓";
+            color: #0f111a;
+            font-size: 15px;
+            font-weight: bold;
+            display: none;
+        }
+        .tick-label input:checked + .custom-tick::after { display: block; }
+
+        .btn-add {
+            background: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue);
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;
+        }
+        .btn-add:hover { background: rgba(59, 130, 246, 0.08); }
+
+        .btn-remove {
+            background-color: rgba(244, 63, 94, 0.1); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.2);
+            padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 13px;
+            align-self: flex-end; margin-top: auto;
+        }
+        .btn-remove:hover { background-color: var(--accent-rose); color: #fff; }
+
+        .btn-generate {
+            background: var(--accent-blue);
+            color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer;
+            font-weight: bold; width: 100%; font-size: 15px; margin-top: 15px;
+        }
+        .btn-generate:hover { background: #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+
+        .output-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: bold;
+            border: 1px solid var(--border-color);
+            background-color: var(--panel-bg);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-action:hover {
+            background-color: #23283b;
+            border-color: var(--text-muted);
+        }
+
+        pre {
+            background-color: var(--input-bg); padding: 22px; border-radius: 10px; overflow-x: auto;
+            border: 1px solid var(--border-color); color: #cbd5e1; direction: ltr; text-align: left;
+            font-family: 'Courier New', Courier, monospace; line-height: 1.6; font-size: 13px;
+        }
+        .hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+        .sub-title { font-size: 13px; font-weight: bold; color: #fff; margin-top: 5px; margin-bottom: 10px; opacity: 0.9; display: flex; align-items: center; gap: 8px;}
+        .success-banner {
+            background-color: #064e3b; color: #a7f3d0; padding: 12px; border-radius: 8px;
+            margin-bottom: 20px; display: none; font-weight: bold; font-size: 13px; border: 1px solid #047857;
+        }
+
+        .help-box {
+            background-color: #131622;
+            border: 1px dashed #334155;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        .help-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .help-list {
+            list-style: none;
+            padding-right: 0;
+            padding-left: 0;
+        }
+        .help-list li {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            line-height: 1.7;
+            position: relative;
+            padding-right: 18px;
+        }
+        html[dir="ltr"] .help-list li {
+            padding-right: 0;
+            padding-left: 18px;
+        }
+        .help-list li::before {
+            content: "•";
+            color: var(--accent-teal);
+            font-weight: bold;
+            font-size: 18px;
+            position: absolute;
+            right: 0;
+            top: -2px;
+        }
+        html[dir="ltr"] .help-list li::before {
+            right: auto;
+            left: 0;
+        }
+        .code-inline {
+            background-color: #0b0d14;
+            color: var(--accent-rose);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            direction: ltr;
+            display: inline-block;
+        }
+        .terminal-block {
+            background-color: #05070a;
+            border: 1px solid #1e293b;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12.5px;
+            color: #38bdf8;
+            direction: ltr;
+            text-align: left;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        .privacy-note {
+            color: var(--accent-teal) !important;
+            font-weight: bold;
+            background-color: rgba(20, 184, 166, 0.05);
+            padding: 10px;
+            border-radius: 6px;
+            border-right: 3px solid var(--accent-teal);
+        }
+    </style>
+</head>
+<body>
+
+<div class="panel">
+    <header>
+        <h2 id="title-text">eXtreme-Nginx-X3-Portify - سازنده کانفیگ هوشمند</h2>
+        <button class="lang-btn" onclick="toggleLanguage()" id="lang-btn">EN</button>
+    </header>
+
+    <div class="section-box">
+        <div class="section-title" id="sec-import">ورودی کدهای JSON (فایل یا متن)</div>
+        <div id="import_success" class="success-banner">✓ اطلاعات با موفقیت پردازش شد!</div>
+        <div class="import-container">
+            <div class="field" style="flex: 2;">
+                <label id="lbl-json-input">متن کامل JSON یا آرایه Inbounds را اینجا پیست کنید:</label>
+                <textarea id="json_input" class="json-textarea" placeholder='{ "inbounds": [ ... ] }...'></textarea>
+            </div>
+            <div class="file-upload-box" onclick="document.getElementById('file_input').click()">
+                <span style="font-size: 26px;">📁</span>
+                <span style="margin-top: 8px; font-weight: bold;" id="lbl-file-box">انتخاب فایل کدهای (.json یا .txt)</span>
+                <span class="hint" id="lbl-file-hint">یا فایل را اینجا رها کنید</span>
+                <input type="file" id="file_input" accept=".json,.txt" onchange="handleFileImport(this)">
+            </div>
+        </div>
+        <button class="btn-generate" onclick="processJsonInput()" style="margin-top: 15px; background: #0f766e; font-size:13.5px; padding:11px;" id="btn-process">⚙ پردازش و استخراج خودکار فیلدها</button>
+    </div>
+
+    <div class="section-box">
+        <div class="section-title" id="sec-base-config">تنظیمات پورت‌ها و آدرس دامین‌ها (مستقیم و CDN)</div>
+        
+        <div class="row">
+            <div class="field">
+                <label id="lbl-tls-port">پورت ورودی TLS (معمولاً 443):</label>
+                <input type="number" id="main_tls_port" value="443">
+            </div>
+            <div class="field">
+                <label id="lbl-http-port">پورت ورودی HTTP (معمولاً 80):</label>
+                <input type="number" id="main_http_port" value="80">
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="sub-title" id="title-direct-block">🌐 تنظیمات دامین مستقیم (Direct Domain)</div>
+        <div class="row">
+            <div class="field">
+                <label id="lbl-direct-domain">آدرس دامین مستقیم:</label>
+                <input type="text" id="direct_domain" value="yourdomain.com" oninput="updateDirectPaths()" style="direction: ltr; text-align: left;">
+            </div>
+        </div>
+        <div class="row">
+            <div class="field">
+                <label id="lbl-direct-fullchain">مسیر فایل گواهی (Direct Fullchain):</label>
+                <input type="text" id="direct_fullchain_path" value="/root/cert/yourdomain.com/fullchain.pem" style="direction: ltr; text-align: left;">
+            </div>
+            <div class="field">
+                <label id="lbl-direct-private">مسیر کلید خصوصی (Direct Private Key):</label>
+                <input type="text" id="direct_private_path" value="/root/cert/yourdomain.com/privkey.pem" style="direction: ltr; text-align: left;">
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="sub-title" id="title-cdn-block">☁️ تنظیمات دامین پشت CDN (CDN Domain)</div>
+        <div class="row">
+            <div class="field">
+                <label id="lbl-cdn-domain">آدرس دامین پشت CDN:</label>
+                <input type="text" id="cdn_domain" value="cdn.yourdomain.com" oninput="updateCdnPaths()" style="direction: ltr; text-align: left;">
+            </div>
+        </div>
+        <div class="row">
+            <div class="field">
+                <label id="lbl-cdn-fullchain">مسیر فایل گواهی (CDN Fullchain):</label>
+                <input type="text" id="cdn_fullchain_path" value="/root/cert/cdn.yourdomain.com/fullchain.pem" style="direction: ltr; text-align: left;">
+            </div>
+            <div class="field">
+                <label id="lbl-cdn-private">مسیر کلید خصوصی (CDN Private Key):</label>
+                <input type="text" id="cdn_private_path" value="/root/cert/cdn.yourdomain.com/privkey.pem" style="direction: ltr; text-align: left;">
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="sub-title" id="title-fake-block">🎭 تنظیمات سایت پنهان‌سازی (Camouflage / Fake Site)</div>
+        <div class="row">
+            <div class="field">
+                <label id="lbl-fake-site">آدرس سایت پنهان‌سازی (Fake Site URL):</label>
+                <input type="text" id="fake_site_url" value="https://www.wikipedia.org" style="direction: ltr; text-align: left;">
+                <span class="hint" id="lbl-fake-hint">ترافیک‌های متفرقه و کاربران عادی به این سایت هدایت می‌شوند.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-box">
+        <div class="section-title" id="sec-extracted">لیست کانفیگ‌های استخراج شده</div>
+        <div id="configs_container">
+            <div class="config-item">
+                <div class="row">
+                    <div class="field">
+                        <label class="lbl-cfg-remark">نام/توضیح کانفیگ:</label>
+                        <input type="text" class="cfg-remark" value="VLESS xhttp sample">
+                    </div>
+                    <div class="field" style="max-width: 110px; min-width:90px;">
+                        <label class="lbl-cfg-port">پورت داخلی:</label>
+                        <input type="number" class="cfg-port" value="4430">
+                    </div>
+                    <div class="field">
+                        <label class="lbl-cfg-path">مسیر (Path):</label>
+                        <input type="text" class="cfg-path" value="/k69ssmg" style="direction: ltr; text-align: left;">
+                    </div>
+                    <div class="field">
+                        <label class="lbl-cfg-sec">نوع امنیت (Security):</label>
+                        <select class="cfg-security" onchange="toggleCardStyle(this)">
+                            <option value="tls" selected>دارای TLS (هدایت به ۴۴۳)</option>
+                            <option value="none">بدون TLS / عادی (هدایت به ۸۰)</option>
+                        </select>
+                    </div>
+                    <div class="tick-container">
+                        <label class="lbl-cfg-active" style="font-size:12px; margin-bottom:5px;">فعال؟</label>
+                        <label class="tick-label">
+                            <input type="checkbox" class="cfg-status" checked>
+                            <span class="custom-tick"></span>
+                        </label>
+                    </div>
+                    <button class="btn-remove" onclick="removeConfig(this)">حذف</button>
+                </div>
+            </div>
+        </div>
+        <button class="btn-add" onclick="addBlankConfigField()" id="btn-add-manual">+ افزودن کانفیگ دستی جدید</button>
+    </div>
+
+    <button class="btn-generate" onclick="buildNginxConfig()" id="btn-build">تولید فایل نهایی کانفیگ دو دامین Nginx</button>
+
+    <div class="section-box" id="output_section" style="margin-top: 25px; display: none;">
+        <div class="section-title" style="color: var(--accent-blue);" id="sec-output">فایل کانفیگ نهایی Nginx</div>
+        
+        <div class="output-actions">
+            <button class="btn-action" onclick="copyNginxConfig()" id="btn-copy">📋 کپی متن کانفیگ</button>
+            <button class="btn-action" onclick="downloadNginxConfig()" id="btn-download">💾 دانلود فایل nginx.conf</button>
+        </div>
+
+        <pre><code id="nginx_code_block"></code></pre>
+    </div>
+
+    <div class="help-box">
+        <div class="help-title" id="help-title">📖 راهنمای کاربری و مراحل استفاده از سیستم</div>
+        <ul class="help-list" id="help-list-content">
+            <li><strong>گام اول (دریافت اطلاعات از پنل سنایی):</strong> وارد پنل ثنایی (Sui / 3X-UI) خود شوید. از منوی سمت چپ به بخش <span class="code-inline">Overview</span> (صفحه اول) بروید. از منوی بالای چارت‌ها گزینه <span class="code-inline">Manage</span> و سپس <span class="code-inline">Config</span> را انتخاب کنید. محتوای فایل <span class="code-inline">config.json</span> را به طور کامل کپی کرده و در کادر متنی بالا پیست کنید یا فایل را مستقیماً آپلود کنید؛ سپس دکمه پردازش را بزنید.</li>
+            <li class="privacy-note">🔒 <strong>اطلاعیه امنیت و حریم خصوصی:</strong> این ابزار به صورت ۱۰۰٪ کلاینت‌ساید (کدهای لوکال فرانت‌اند) اجرا می‌شود. هیچ دیتایی، آدرس دامین یا کدهای کانفیگی به هیچ سرور خارجی ارسال یا ذخیره نمی‌شود و تمامی عملیات‌ها درون مرورگر شما انجام می‌گیرد.</li>
+            <li><strong>گام دوم (پیکربندی شبکه دامین‌ها):</strong> آدرس‌های دامین مستقیم و دامین CDN خود را وارد کنید. اسکریپت به صورت هوشمند مسیرهای سرتیفیکیت SSL هر بخش را تفکیک می‌کند. همچنین آدرس سایت استتار (Fake Site) را مشخص کنید.</li>
+            <li><strong>گام سوم (تنظیمات سرور لینوکس Nginx):</strong> پس از زدن دکمه تولید نهایی و دریافت خروجی متنی، وارد سرور خود شده و دستورات زیر را برای نصب و راه‌اندازی اعمال کنید:
+                <div class="terminal-block">
+                    # ۱. بروزرسانی پکیج‌ها و نصب وب‌سرور انجین‌اکس<br>
+                    sudo apt update && sudo apt install nginx -y<br><br>
+                    # ۲. ایجاد و ویرایش فایل کانفیگ جدید برای لوکیشن‌ها<br>
+                    nano /etc/nginx/conf.d/v2ray.conf<br><br>
+                    # [کدهای تولید شده توسط سایت را داخل این فایل پیست کرده و با Ctrl+O و Ctrl+X ذخیره کنید]<br><br>
+                    # ۳. تست صحت ساختار کدهای پیست شده بدون خرابی سرور<br>
+                    nginx -t<br><br>
+                    # ۴. اعمال نهایی تغییرات با ری‌استارت کردن سرویس انجین‌اکس<br>
+                    systemctl restart nginx
+                </div>
+            </li>
+            <li><strong>گام چهارم (اتمام کار):</strong> پورت‌های ورودی سرور هسته (Core) خود را به پورتی غیر از ۸۰ و ۴۴۳ تغییر دهید تا ترافیک‌های ورودی تداخل نداشته باشند و انجین‌اکس کار مانیتورینگ و یکپارچه‌سازی روی یک پورت واحد را به درستی به سرانجام برساند.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    const translations = {
+        fa: {
+            title: "eXtreme-Nginx-X3-Portify - سازنده کانفیگ هوشمند",
+            secImport: "ورودی کدهای JSON (فایل یا متن)",
+            lblJsonInput: "متن کامل JSON یا آرایه Inbounds را اینجا پیست کنید:",
+            lblFileBox: "انتخاب فایل کدهای (.json یا .txt)",
+            lblFileHint: "یا فایل را اینجا رها کنید",
+            btnProcess: "⚙ پردازش و استخراج خودکار فیلدها",
+            secBaseConfig: "تنظیمات پورت‌ها و آدرس دامین‌ها (مستقیم و CDN)",
+            lblDirectDomain: "آدرس دامین مستقیم:",
+            lblCdnDomain: "آدرس دامین پشت CDN:",
+            lblTlsPort: "پورت ورودی TLS (معمولاً 443):",
+            lblHttpPort: "پورت ورودی HTTP (معمولاً 80):",
+            lblDirectFullchain: "مسیر فایل گواهی (Direct Fullchain):",
+            lblDirectPrivate: "مسیر کلید خصوصی (Direct Private Key):",
+            lblCdnFullchain: "مسیر فایل گواهی (CDN Fullchain):",
+            lblCdnPrivate: "مسیر کلید خصوصی (CDN Private Key):",
+            titleDirectBlock: "🌐 تنظیمات دامین مستقیم (Direct Domain)",
+            titleCdnBlock: "☁️ تنظیمات دامین پشت CDN (CDN Domain)",
+            titleFakeBlock: "🎭 تنظیمات سایت پنهان‌سازی (Camouflage / Fake Site)",
+            lblFakeSite: "آدرس سایت پنهان‌سازی (Fake Site URL):",
+            lblFakeHint: "ترافیک‌های متفرقه و کاربران عادی به این سایت هدایت می‌شوند.",
+            secExtracted: "لیست کانفیگ‌های استخراج شده",
+            btnAddManual: "+ افزودن کانفیگ دستی جدید",
+            btnBuild: "تولید فایل نهایی کانفیگ دو دامین Nginx",
+            secOutput: "فایل کانفیگ نهایی Nginx",
+            btnCopy: "📋 کپی متن کانفیگ",
+            btnDownload: "💾 دانلود فایل nginx.conf",
+            helpTitle: "📖 راهنمای کاربری و مراحل استفاده از سیستم",
+            langBtn: "EN"
+        },
+        en: {
+            title: "eXtreme-Nginx-X3-Portify - Smart Config Builder",
+            secImport: "JSON Core Input (File or Raw Text)",
+            lblJsonInput: "Paste complete JSON text or Inbounds array here:",
+            lblFileBox: "Select code file (.json or .txt)",
+            lblFileHint: "or drag & drop file here",
+            btnProcess: "⚙ Process and Extract Inbound Fields",
+            secBaseConfig: "Main Ports & Domain Settings (Direct & CDN)",
+            lblDirectDomain: "Direct Domain Address:",
+            lblCdnDomain: "Behind CDN Domain Address:",
+            lblTlsPort: "Inbound TLS Port (443):",
+            lblHttpPort: "Inbound HTTP Port (80):",
+            lblDirectFullchain: "Direct Fullchain Path:",
+            lblDirectPrivate: "Direct Private Key Path:",
+            lblCdnFullchain: "CDN Fullchain Path:",
+            lblCdnPrivate: "CDN Private Key Path:",
+            titleDirectBlock: "🌐 Direct Domain Configuration",
+            titleCdnBlock: "☁️ Behind CDN Domain Configuration",
+            titleFakeBlock: "🎭 Camouflage / Fake Site Settings",
+            lblFakeSite: "Camouflage Site (Fake Site URL):",
+            lblFakeHint: "Regular users opening the domain will see this website instead.",
+            secExtracted: "Extracted Inbound Proxies Status",
+            btnAddManual: "+ Add Manual Inbound Field",
+            btnBuild: "Generate Dual Domain Nginx Config",
+            secOutput: "Final Structured Nginx Config",
+            btnCopy: "📋 Copy Config Text",
+            btnDownload: "💾 Download nginx.conf File",
+            helpTitle: "📖 User Guide & Configuration Steps",
+            langBtn: "FA"
+        }
+    };
+
+    let currentLang = 'fa';
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'fa' ? 'en' : 'fa';
+        const html = document.getElementById('app-html');
+        html.setAttribute('dir', currentLang === 'en' ? 'ltr' : 'rtl');
+        html.setAttribute('lang', currentLang);
+
+        const t = translations[currentLang];
+        document.getElementById('title-text').innerText = t.title;
+        document.getElementById('sec-import').innerText = t.secImport;
+        document.getElementById('lbl-json-input').innerText = t.lblJsonInput;
+        document.getElementById('lbl-file-box').innerText = t.lblFileBox;
+        document.getElementById('lbl-file-hint').innerText = t.lblFileHint;
+        document.getElementById('btn-process').innerText = t.btnProcess;
+        document.getElementById('sec-base-config').innerText = t.secBaseConfig;
+        document.getElementById('lbl-direct-domain').innerText = t.lblDirectDomain;
+        document.getElementById('lbl-cdn-domain').innerText = t.lblCdnDomain;
+        document.getElementById('lbl-tls-port').innerText = t.lblTlsPort;
+        document.getElementById('lbl-http-port').innerText = t.lblHttpPort;
+        document.getElementById('lbl-direct-fullchain').innerText = t.lblDirectFullchain;
+        document.getElementById('lbl-direct-private').innerText = t.lblDirectPrivate;
+        document.getElementById('lbl-cdn-fullchain').innerText = t.lblCdnFullchain;
+        document.getElementById('lbl-cdn-private').innerText = t.lblCdnPrivate;
+        document.getElementById('title-direct-block').innerText = t.titleDirectBlock;
+        document.getElementById('title-cdn-block').innerText = t.titleCdnBlock;
+        document.getElementById('title-fake-block').innerText = t.titleFakeBlock;
+        document.getElementById('lbl-fake-site').innerText = t.lblFakeSite;
+        document.getElementById('lbl-fake-hint').innerText = t.lblFakeHint;
+        document.getElementById('sec-extracted').innerText = t.secExtracted;
+        document.getElementById('btn-add-manual').innerText = t.btnAddManual;
+        document.getElementById('btn-build').innerText = t.btnBuild;
+        document.getElementById('sec-output').innerText = t.secOutput;
+        document.getElementById('btn-copy').innerText = t.btnCopy;
+        document.getElementById('btn-download').innerText = t.btnDownload;
+        document.getElementById('help-title').innerText = t.helpTitle;
+        document.getElementById('lang-btn').innerText = t.langBtn;
+
+        // ترجمه فیلدهای متحرک کارت‌ها در صورت نیاز سیستم
+        document.querySelectorAll('.lbl-cfg-remark').forEach(el => el.innerText = currentLang==='fa'?"نام/توضیح کانفیگ:":"Remark:");
+        document.querySelectorAll('.lbl-cfg-port').forEach(el => el.innerText = currentLang==='fa'?"پورت داخلی:":"Port:");
+        document.querySelectorAll('.lbl-cfg-path').forEach(el => el.innerText = currentLang==='fa'?"مسیر (Path):":"Path:");
+        document.querySelectorAll('.lbl-cfg-sec').forEach(el => el.innerText = currentLang==='fa'?"نوع امنیت (Security):":"Security:");
+        document.querySelectorAll('.lbl-cfg-active').forEach(el => el.innerText = currentLang==='fa'?"فعال؟":"Active?");
+        document.querySelectorAll('.btn-remove').forEach(el => el.innerText = currentLang==='fa'?"حذف":"Remove");
+    }
+
+    function updateDirectPaths() {
+        const direct = document.getElementById('direct_domain').value.trim() || 'yourdomain.com';
+        document.getElementById('direct_fullchain_path').value = `/root/cert/${direct}/fullchain.pem`;
+        document.getElementById('direct_private_path').value = `/root/cert/${direct}/privkey.pem`;
+    }
+
+    function updateCdnPaths() {
+        const cdn = document.getElementById('cdn_domain').value.trim() || 'cdn.yourdomain.com';
+        document.getElementById('cdn_fullchain_path').value = `/root/cert/${cdn}/fullchain.pem`;
+        document.getElementById('cdn_private_path').value = `/root/cert/${cdn}/privkey.pem`;
+    }
+
+    function toggleCardStyle(selectEl) {
+        const item = selectEl.closest('.config-item');
+        if(selectEl.value === 'none') { item.classList.add('no-tls'); } 
+        else { item.classList.remove('no-tls'); }
+    }
+
+    function addBlankConfigField(remark="", port="", path="", security="tls", isChecked = true) {
+        const container = document.getElementById('configs_container');
+        if(path && !path.startsWith('/')) path = '/' + path;
+        
+        const html = `
+            <div class="config-item ${security === 'none' ? 'no-tls' : ''}">
+                <div class="row">
+                    <div class="field">
+                        <label class="lbl-cfg-remark">${currentLang==='fa'?"نام/توضیح کانفیگ:":"Remark:"}</label>
+                        <input type="text" class="cfg-remark" value="${remark}">
+                    </div>
+                    <div class="field" style="max-width: 110px; min-width:90px;">
+                        <label class="lbl-cfg-port">${currentLang==='fa'?"پورت داخلی:":"Port:"}</label>
+                        <input type="number" class="cfg-port" value="${port}">
+                    </div>
+                    <div class="field">
+                        <label class="lbl-cfg-path">${currentLang==='fa'?"مسیر (Path):":"Path:"}</label>
+                        <input type="text" class="cfg-path" value="${path}" style="direction: ltr; text-align: left;">
+                    </div>
+                    <div class="field">
+                        <label class="lbl-cfg-sec">${currentLang==='fa'?"نوع امنیت (Security):":"Security:"}</label>
+                        <select class="cfg-security" onchange="toggleCardStyle(this)">
+                            <option value="tls" ${security === 'tls' ? 'selected' : ''}>دارای TLS (هدایت به ۴۴۳)</option>
+                            <option value="none" ${security === 'none' ? 'selected' : ''}>بدون TLS / عادی (هدایت به ۸۰)</option>
+                        </select>
+                    </div>
+                    <div class="tick-container">
+                        <label class="lbl-cfg-active" style="font-size:12px; margin-bottom:5px;">${currentLang==='fa'?"فعال؟":"Active?"}</label>
+                        <label class="tick-label">
+                            <input type="checkbox" class="cfg-status" ${isChecked ? 'checked' : ''}>
+                            <span class="custom-tick"></span>
+                        </label>
+                    </div>
+                    <button class="btn-remove" onclick="removeConfig(this)">${currentLang==='fa'?"حذف":"Remove"}</button>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function removeConfig(buttonEl) {
+        const items = document.querySelectorAll('.config-item');
+        if(items.length > 1) { buttonEl.closest('.config-item').remove(); } 
+        else { alert(currentLang==='fa'?'حداقل وجود یک فیلد الزامی است.':'At least one field is required.'); }
+    }
+
+    function handleFileImport(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('json_input').value = e.target.result;
+            processJsonInput();
+        };
+        reader.readAsText(file);
+    }
+
+    function processJsonInput() {
+        const rawText = document.getElementById('json_input').value.trim();
+        if(!rawText) {
+            alert(currentLang==='fa'?'ابتدا کدهای JSON را وارد کنید.':'Please input JSON text first.');
+            return;
+        }
+
+        try {
+            let parsedObj = JSON.parse(rawText);
+            let inbounds = [];
+
+            if (Array.isArray(parsedObj)) { inbounds = parsedObj; } 
+            else if (parsedObj.inbounds && Array.isArray(parsedObj.inbounds)) { inbounds = parsedObj.inbounds; } 
+            else {
+                alert(currentLang==='fa'?'آرایه اینباندها پیدا نشد.':'Inbounds array not found.');
+                return;
+            }
+
+            const container = document.getElementById('configs_container');
+            container.innerHTML = '';
+            let importedCount = 0;
+
+            inbounds.forEach(inbound => {
+                if (inbound.protocol === 'tunnel' || inbound.port === 62789) return;
+
+                let port = inbound.port || '';
+                let protocol = inbound.protocol || 'vless';
+                let tag = inbound.tag || `in-${port}`;
+                let path = '';
+                let security = 'none';
+
+                if (inbound.streamSettings) {
+                    const ss = inbound.streamSettings;
+                    if (ss.security === 'tls') { security = 'tls'; }
+                    
+                    const net = ss.network;
+                    if (net === 'xhttp' && ss.xhttpSettings) { path = ss.xhttpSettings.path; } 
+                    else if (net === 'ws' && ss.wsSettings) { path = ss.wsSettings.path; } 
+                    else if (net === 'httpupgrade' && ss.httpupgradeSettings) { path = ss.httpupgradeSettings.path; } 
+                    else if (net === 'grpc' && ss.grpcSettings) { path = ss.grpcSettings.serviceName || ''; }
+                }
+
+                let remark = `${protocol.toUpperCase()} (${inbound.streamSettings ? inbound.streamSettings.network : 'tcp'}) - ${tag}`;
+                addBlankConfigField(remark, port, path, security, true);
+                importedCount++;
+            });
+
+            if(importedCount > 0) {
+                const banner = document.getElementById('import_success');
+                banner.style.display = 'block';
+                setTimeout(() => banner.style.display = 'none', 5000);
+            }
+        } catch (err) {
+            alert('JSON Error: ' + err.message);
+        }
+    }
+
+    function buildNginxConfig() {
+        const directDom = document.getElementById('direct_domain').value.trim();
+        const cdnDom = document.getElementById('cdn_domain').value.trim();
+        const tlsPort = document.getElementById('main_tls_port').value;
+        const httpPort = document.getElementById('main_http_port').value;
+        
+        const directFullchain = document.getElementById('direct_fullchain_path').value.trim();
+        const directPrivate = document.getElementById('direct_private_path').value.trim();
+        
+        const cdnFullchain = document.getElementById('cdn_fullchain_path').value.trim();
+        const cdnPrivate = document.getElementById('cdn_private_path').value.trim();
+        
+        const fakeSite = document.getElementById('fake_site_url').value.trim();
+
+        if(!directDom || !cdnDom) { 
+            alert(currentLang==='fa'?'وارد کردن هر دو دامین الزامی است.':'Both domain fields are required.'); 
+            return; 
+        }
+
+        let fakeHost = fakeSite.replace('https://', '').replace('http://', '').split('/')[0];
+        const configItems = document.querySelectorAll('.config-item');
+        
+        let tlsLocations = "";
+        let httpLocations = "";
+
+        configItems.forEach(item => {
+            const isActive = item.querySelector('.cfg-status').checked;
+            if (!isActive) return;
+
+            const remark = item.querySelector('.cfg-remark').value.trim();
+            const port = item.querySelector('.cfg-port').value;
+            let path = item.querySelector('.cfg-path').value.trim();
+            const security = item.querySelector('.cfg-security').value;
+
+            if(!port || !path) return;
+            if(!path.startsWith('/') && !remark.toLowerCase().includes('grpc')) path = '/' + path;
+
+            let block = `    # ${remark || 'Proxy Connection'}\n`;
+            
+            if(remark.toLowerCase().includes('grpc')) {
+                block += `    location /${path.replace(/^\//, '')} {\n`;
+                block += `        if ($request_method != 'POST') { return 404; }\n`;
+                block += `        client_max_body_size 0;\n`;
+                block += `        grpc_set_header X-Real-IP $remote_addr;\n`;
+                block += `        grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n`;
+                block += `        grpc_pass grpc://127.0.0.1:${port};\n`;
+                block += `    }\n\n`;
+            } else {
+                block += `    location ${path} {\n`;
+                block += `        proxy_redirect off;\n`;
+                block += `        proxy_pass http://127.0.0.1:${port};\n`;
+                block += `        proxy_http_version 1.1;\n`;
+                block += `        proxy_set_header Upgrade $http_upgrade;\n`;
+                block += `        proxy_set_header Connection "upgrade";\n`;
+                block += `        proxy_set_header Host $http_host;\n`;
+                block += `        proxy_set_header X-Real-IP $remote_addr;\n`;
+                block += `        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n`;
+                block += `        client_max_body_size 0;\n`;
+                block += `    }\n\n`;
+            }
+
+            if(security === 'tls') { tlsLocations += block; } 
+            else { httpLocations += block; }
+        });
+
+        let directFakeLocation = `    # Camouflage Masking (Fake Site Proxy)\n`;
+        directFakeLocation += `    location / {\n`;
+        directFakeLocation += `        proxy_pass ${fakeSite};\n`;
+        directFakeLocation += `        proxy_set_header Host ${fakeHost};\n`;
+        directFakeLocation += `        proxy_set_header X-Real-IP $remote_addr;\n`;
+        directFakeLocation += `        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n`;
+        directFakeLocation += `        proxy_set_header X-Forwarded-Proto $scheme;\n`;
+        directFakeLocation += `        proxy_ssl_server_name on;\n`;
+        directFakeLocation += `    }\n\n`;
+
+        let cdnFakeLocation = `    # CDN Camouflage Masking\n`;
+        cdnFakeLocation += `    location / {\n`;
+        cdnFakeLocation += `        proxy_pass ${fakeSite};\n`;
+        cdnFakeLocation += `        proxy_set_header Host ${fakeHost};\n`;
+        cdnFakeLocation += `        proxy_set_header X-Real-IP $http_cf_connecting_ip; # Restoring Real CDN IP\n`;
+        cdnFakeLocation += `        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n`;
+        cdnFakeLocation += `        proxy_ssl_server_name on;\n`;
+        cdnFakeLocation += `    }\n\n`;
+
+        let finalOutput = `# =========================================================\n`;
+        finalOutput += `# eXtreme-Nginx-X3-Portify Dedicated Configuration\n`;
+        finalOutput += `# Generated Time: ${new Date().toLocaleString()}\n`;
+        finalOutput += `# =========================================================\n\n`;
+
+        finalOutput += `# 1. DIRECT SERVER BLOCK (Dedicated SSL)\n`;
+        finalOutput += `server {\n`;
+        finalOutput += `    listen ${tlsPort} ssl http2;\n`;
+        finalOutput += `    listen [::]:${tlsPort} ssl http2;\n`;
+        finalOutput += `    server_name ${directDom};\n\n`;
+        finalOutput += `    ssl_certificate ${directFullchain};\n`;
+        finalOutput += `    ssl_certificate_key ${directPrivate};\n\n`;
+        finalOutput += `    ssl_protocols TLSv1.2 TLSv1.3;\n`;
+        finalOutput += `    ssl_ciphers HIGH:!aNULL:!MD5;\n\n`;
+        finalOutput += directFakeLocation;
+        finalOutput += tlsLocations;
+        finalOutput += `}\n\n`;
+
+        finalOutput += `# 2. CDN BEHIND PROXY SERVER BLOCK (Dedicated SSL)\n`;
+        finalOutput += `server {\n`;
+        finalOutput += `    listen ${tlsPort} ssl http2;\n`;
+        finalOutput += `    listen [::]:${tlsPort} ssl http2;\n`;
+        finalOutput += `    server_name ${cdnDom};\n\n`;
+        finalOutput += `    ssl_certificate ${cdnFullchain};\n`;
+        finalOutput += `    ssl_certificate_key ${cdnPrivate};\n\n`;
+        finalOutput += `    ssl_protocols TLSv1.2 TLSv1.3;\n\n`;
+        finalOutput += cdnFakeLocation;
+        finalOutput += tlsLocations;
+        finalOutput += `}\n\n`;
+
+        finalOutput += `# 3. GLOBAL HTTP TO HTTPS REDIRECT (Port 80)\n`;
+        finalOutput += `server {\n`;
+        finalOutput += `    listen ${httpPort};\n`;
+        finalOutput += `    listen [::]:${httpPort};\n`;
+        finalOutput += `    server_name ${directDom} ${cdnDom};\n\n`;
+        if (httpLocations) {
+            finalOutput += httpLocations;
+        } else {
+            finalOutput += `    return 301 https://$host$request_uri;\n`;
+        }
+        finalOutput += `}\n`;
+
+        document.getElementById('nginx_code_block').textContent = finalOutput;
+        document.getElementById('output_section').style.display = 'block';
+        document.getElementById('output_section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyNginxConfig() {
+        const codeText = document.getElementById('nginx_code_block').textContent;
+        navigator.clipboard.writeText(codeText).then(() => {
+            alert(currentLang === 'fa' ? '✓ متن کانفیگ با موفقیت کپی شد!' : '✓ Config copied to clipboard!');
+        }).catch(err => {
+            alert('Error: ' + err);
+        });
+    }
+
+    function downloadNginxConfig() {
+        const codeText = document.getElementById('nginx_code_block').textContent;
+        const blob = new Blob([codeText], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'nginx.conf';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }
+</script>
+</body>
+</html>
